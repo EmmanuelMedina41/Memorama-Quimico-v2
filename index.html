@@ -1,0 +1,1095 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="color-scheme" content="dark">
+<title>Memorama Químico</title>
+
+<style>
+:root {
+  --fondo: #101827;
+  --panel: #192335;
+  --panel-hover: #223149;
+  --texto: #f1f5f9;
+  --suave: #a6b3c7;
+  --borde: #2c3a50;
+  --azul: #75d5ff;
+  --verde: #72e2b5;
+  --amarillo: #ffdf8b;
+  --radio: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, select {
+  font: inherit;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+button:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--azul);
+  outline-offset: 3px;
+}
+
+.contenedor {
+  width: min(100% - 32px, 960px);
+  margin: 0 auto;
+  padding: 30px 0;
+}
+
+.encabezado {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.icono {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -1px;
+}
+
+.subtitulo {
+  max-width: 570px;
+  margin: 10px auto 0;
+  color: var(--suave);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.configuracion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+}
+
+.grupo {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.grupo label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--suave);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+select {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: var(--texto);
+  background: #111b2b;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.boton {
+  min-height: 44px;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 750;
+  transition: background .15s, border-color .15s;
+}
+
+.boton-principal {
+  color: #10202c;
+  background: var(--azul);
+}
+
+.boton-principal:hover {
+  background: #a0e4ff;
+}
+
+.boton-secundario {
+  color: var(--texto);
+  background: #253249;
+  border-color: #35445c;
+}
+
+.boton-secundario:hover {
+  background: #30415a;
+}
+
+.estadisticas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.estadistica {
+  min-width: 0;
+  padding: 13px 5px;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+}
+
+.estadistica .numero {
+  display: block;
+  color: var(--azul);
+  font-size: clamp(20px, 3vw, 27px);
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.estadistica .etiqueta {
+  display: block;
+  margin-top: 4px;
+  color: var(--suave);
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.progreso-caja {
+  margin-bottom: 14px;
+}
+
+.progreso-texto {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: var(--suave);
+  font-size: 12px;
+}
+
+.progreso-fondo {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #28354a;
+}
+
+#barraProgreso {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--verde);
+  transition: width .25s ease;
+}
+
+.mensaje {
+  min-height: 24px;
+  margin: 14px 0 8px;
+  text-align: center;
+  color: var(--amarillo);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+#cuentaRegresiva {
+  display: none;
+  margin: 6px 0 16px;
+  text-align: center;
+  color: var(--amarillo);
+  font-size: 28px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.tablero {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tarjeta {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1 / .88;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  perspective: 600px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tarjeta-interior {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  transition: transform .25s ease;
+}
+
+.tarjeta.volteada .tarjeta-interior,
+.tarjeta.acertada .tarjeta-interior {
+  transform: rotateY(180deg);
+}
+
+.cara {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  overflow: hidden;
+  border-radius: inherit;
+  text-align: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.reverso {
+  color: var(--azul);
+  background: #1d2b40;
+  border: 1px solid #35465e;
+  transition: background .15s;
+}
+
+.tarjeta:not(:disabled):hover .reverso {
+  background: #293c56;
+}
+
+.reverso::before {
+  content: "⚛";
+  font-size: clamp(19px, 2.5vw, 30px);
+}
+
+.reverso::after {
+  content: "QUÍMICA";
+  margin-top: 3px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.frente {
+  transform: rotateY(180deg);
+  color: #172235;
+  background: #edf4fc;
+  border: 1px solid #d2e1f3;
+}
+
+.frente .simbolo {
+  font-size: clamp(21px, 3vw, 34px);
+  font-weight: 900;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.frente .nombre {
+  font-size: clamp(10px, 1.2vw, 13px);
+  font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.frente .tipo {
+  margin-top: 5px;
+  color: #65748a;
+  font-size: 8px;
+  font-weight: 750;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.tarjeta.acertada .frente {
+  background: #d8f9e9;
+  border-color: var(--verde);
+}
+
+.tarjeta:disabled {
+  cursor: default;
+}
+
+.instrucciones {
+  margin-top: 22px;
+}
+
+.instrucciones h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.instrucciones ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.instrucciones li,
+.instrucciones p {
+  color: var(--suave);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.pie {
+  padding: 8px 0;
+  text-align: center;
+  color: #8291aa;
+  font-size: 11px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(5, 10, 20, .86);
+}
+
+.modal.visible {
+  display: flex;
+}
+
+.modal-contenido {
+  width: min(400px, 100%);
+  padding: 26px 20px;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid #3b4a61;
+  border-radius: 20px;
+}
+
+.trofeo {
+  font-size: 48px;
+}
+
+.modal h2 {
+  margin: 8px 0;
+  color: var(--amarillo);
+  font-size: 26px;
+}
+
+.modal p {
+  color: var(--suave);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.resumen {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 20px 0;
+}
+
+.resumen strong {
+  display: block;
+  color: var(--verde);
+  font-size: 22px;
+}
+
+.resumen span {
+  color: var(--suave);
+  font-size: 11px;
+}
+
+@media (min-width: 701px) {
+  .configuracion .boton {
+    min-width: 135px;
+  }
+}
+
+@media (max-width: 700px) {
+  .contenedor {
+    width: min(100% - 20px, 520px);
+    padding: 20px 0 calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .encabezado {
+    margin-bottom: 18px;
+  }
+
+  .icono {
+    font-size: 27px;
+  }
+
+  .subtitulo {
+    max-width: 360px;
+    font-size: 13px;
+  }
+
+  .panel {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .configuracion {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .grupo {
+    grid-column: 1 / -1;
+  }
+
+  .configuracion .boton {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 6px;
+    font-size: 13px;
+  }
+
+  .estadisticas {
+    gap: 7px;
+    margin-bottom: 17px;
+  }
+
+  .estadistica {
+    padding: 10px 3px;
+    border-radius: 10px;
+  }
+
+  .estadistica .etiqueta {
+    font-size: 9px;
+    letter-spacing: 0;
+  }
+
+  .progreso-texto {
+    font-size: 11px;
+  }
+
+  .tablero {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .tarjeta {
+    aspect-ratio: 1 / .95;
+    border-radius: 9px;
+  }
+
+  .cara {
+    padding: 4px;
+    border-radius: 9px;
+  }
+
+  .tarjeta-interior {
+    border-radius: 9px;
+  }
+
+  .frente .simbolo {
+    font-size: clamp(23px, 7vw, 32px);
+  }
+
+  .frente .nombre {
+    font-size: clamp(10px, 3vw, 13px);
+  }
+
+  .frente .tipo {
+    font-size: 7px;
+    margin-top: 4px;
+  }
+
+  .reverso::before {
+    font-size: 24px;
+  }
+
+  .reverso::after {
+    font-size: 7px;
+    letter-spacing: .6px;
+  }
+
+  .instrucciones {
+    margin-top: 18px;
+  }
+
+  .instrucciones li,
+  .instrucciones p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .tablero {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .frente .nombre {
+    font-size: 11px;
+  }
+
+  .configuracion .boton {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+<main class="contenedor">
+
+  <header class="encabezado">
+    <div class="icono">⚗️</div>
+    <h1>Memorama Químico</h1>
+    <p class="subtitulo">
+      Aprende los nombres y símbolos de los elementos químicos
+      de las familias A jugando.
+    </p>
+  </header>
+
+  <section class="panel configuracion" aria-label="Configuración del juego">
+    <div class="grupo">
+      <label for="modo">Número de tarjetas</label>
+      <select id="modo">
+        <option value="22">Fácil · 22 tarjetas</option>
+        <option value="44" selected>Completo · 44 tarjetas</option>
+      </select>
+    </div>
+
+    <button class="boton boton-principal" id="iniciar">
+      ▶ Nueva partida
+    </button>
+
+    <button class="boton boton-secundario" id="reiniciar">
+      ↻ Reiniciar
+    </button>
+  </section>
+
+  <section class="estadisticas" aria-label="Estadísticas">
+    <div class="estadistica">
+      <span class="numero" id="intentos">0</span>
+      <span class="etiqueta">Intentos</span>
+    </div>
+    <div class="estadistica">
+      <span class="numero" id="parejas">0/22</span>
+      <span class="etiqueta">Parejas</span>
+    </div>
+    <div class="estadistica">
+      <span class="numero" id="tiempo">00:00</span>
+      <span class="etiqueta">Tiempo</span>
+    </div>
+    <div class="estadistica">
+      <span class="numero" id="precision">100%</span>
+      <span class="etiqueta">Precisión</span>
+    </div>
+  </section>
+
+  <section class="progreso-caja">
+    <div class="progreso-texto">
+      <span>Progreso</span>
+      <span id="textoProgreso">0% completado</span>
+    </div>
+    <div class="progreso-fondo"
+         role="progressbar"
+         aria-label="Progreso de la partida"
+         aria-valuemin="0"
+         aria-valuemax="100"
+         aria-valuenow="0"
+         id="progresoAccesible">
+      <div id="barraProgreso"></div>
+    </div>
+  </section>
+
+  <div class="mensaje" id="mensaje" role="status" aria-live="polite">
+    ¡Memoriza las tarjetas!
+  </div>
+
+  <div id="cuentaRegresiva" aria-live="polite">10</div>
+
+  <section class="tablero" id="tablero" aria-label="Tarjetas del memorama"></section>
+
+  <section class="panel instrucciones">
+    <h2>Cómo jugar</h2>
+    <ul>
+      <li>Memoriza las tarjetas durante los primeros 10 segundos.</li>
+      <li>Después, encuentra el nombre y el símbolo que corresponden.</li>
+      <li>Cada pareja correcta permanece descubierta.</li>
+      <li>Encuentra todas las parejas para ganar.</li>
+    </ul>
+    <p><strong>Objetivo:</strong> aprender los nombres y símbolos químicos.</p>
+  </section>
+
+  <footer class="pie">
+    MEMORAMA QUÍMICO · APRENDE JUGANDO
+  </footer>
+</main>
+
+<div class="modal" id="modalVictoria" role="dialog"
+     aria-modal="true" aria-labelledby="tituloVictoria">
+  <div class="modal-contenido">
+    <div class="trofeo">🏆</div>
+    <h2 id="tituloVictoria">¡Excelente trabajo!</h2>
+    <p>¡Encontraste todas las parejas! Has completado el desafío.</p>
+
+    <div class="resumen">
+      <div>
+        <strong id="resultadoIntentos">0</strong>
+        <span>Intentos</span>
+      </div>
+      <div>
+        <strong id="resultadoTiempo">00:00</strong>
+        <span>Tiempo</span>
+      </div>
+      <div>
+        <strong id="resultadoPrecision">100%</strong>
+        <span>Precisión</span>
+      </div>
+    </div>
+
+    <button class="boton boton-principal" id="jugarOtra">
+      ↻ Jugar otra vez
+    </button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const elementos = [
+  { nombre: "Carbono", simbolo: "C", tipo: "No metal" },
+  { nombre: "Nitrógeno", simbolo: "N", tipo: "No metal" },
+  { nombre: "Fósforo", simbolo: "P", tipo: "No metal" },
+  { nombre: "Azufre", simbolo: "S", tipo: "No metal" },
+  { nombre: "Selenio", simbolo: "Se", tipo: "No metal" },
+  { nombre: "Flúor", simbolo: "F", tipo: "No metal" },
+  { nombre: "Cloro", simbolo: "Cl", tipo: "No metal" },
+  { nombre: "Bromo", simbolo: "Br", tipo: "No metal" },
+  { nombre: "Yodo", simbolo: "I", tipo: "No metal" },
+  { nombre: "Astato", simbolo: "At", tipo: "No metal*" },
+  { nombre: "Teneso", simbolo: "Ts", tipo: "No metal*" },
+  { nombre: "Arsénico", simbolo: "As", tipo: "Metaloide" },
+  { nombre: "Silicio", simbolo: "Si", tipo: "Metaloide" },
+  { nombre: "Boro", simbolo: "B", tipo: "Metaloide" },
+  { nombre: "Hidrógeno", simbolo: "H", tipo: "Gas" },
+  { nombre: "Oxígeno", simbolo: "O", tipo: "Gas" },
+  { nombre: "Helio", simbolo: "He", tipo: "Gas noble" },
+  { nombre: "Neón", simbolo: "Ne", tipo: "Gas noble" },
+  { nombre: "Argón", simbolo: "Ar", tipo: "Gas noble" },
+  { nombre: "Kriptón", simbolo: "Kr", tipo: "Gas noble" },
+  { nombre: "Xenón", simbolo: "Xe", tipo: "Gas noble" },
+  { nombre: "Radón", simbolo: "Rn", tipo: "Gas noble" }
+];
+
+const tablero = document.getElementById("tablero");
+const selectorModo = document.getElementById("modo");
+const mensaje = document.getElementById("mensaje");
+const modal = document.getElementById("modalVictoria");
+const contador = document.getElementById("cuentaRegresiva");
+
+let primeraTarjeta = null;
+let segundaTarjeta = null;
+let bloqueado = false;
+let intentos = 0;
+let parejasEncontradas = 0;
+let totalParejas = 22;
+let inicioTiempo = null;
+let temporizador = null;
+let temporizadorMemorizacion = null;
+let temporizadorError = null;
+let partidaTerminada = false;
+let tarjetasAcertadas = new Set();
+
+function mezclar(lista) {
+  const copia = [...lista];
+
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+
+  return copia;
+}
+
+function formatoTiempo(segundos) {
+  const minutos = Math.floor(segundos / 60);
+  const resto = segundos % 60;
+
+  return String(minutos).padStart(2, "0") + ":" +
+         String(resto).padStart(2, "0");
+}
+
+function tiempoTranscurrido() {
+  if (inicioTiempo === null) return 0;
+  return Math.floor((Date.now() - inicioTiempo) / 1000);
+}
+
+function actualizarTiempo() {
+  document.getElementById("tiempo").textContent =
+    formatoTiempo(tiempoTranscurrido());
+}
+
+function actualizarEstadisticas() {
+  document.getElementById("intentos").textContent = intentos;
+  document.getElementById("parejas").textContent =
+    parejasEncontradas + "/" + totalParejas;
+
+  const precision = intentos === 0
+    ? 100
+    : Math.round((parejasEncontradas / intentos) * 100);
+
+  document.getElementById("precision").textContent = precision + "%";
+
+  const porcentaje = Math.round(
+    (parejasEncontradas / totalParejas) * 100
+  );
+
+  document.getElementById("barraProgreso").style.width =
+    porcentaje + "%";
+
+  document.getElementById("textoProgreso").textContent =
+    porcentaje + "% completado";
+
+  document.getElementById("progresoAccesible")
+    .setAttribute("aria-valuenow", porcentaje);
+}
+
+function crearTarjeta(elemento, contenido, tipoTarjeta, id) {
+  const boton = document.createElement("button");
+  boton.type = "button";
+  boton.className = "tarjeta";
+  boton.dataset.elemento = elemento.simbolo;
+  boton.dataset.tipo = tipoTarjeta;
+  boton.dataset.id = id;
+  boton.setAttribute("aria-label", "Tarjeta oculta");
+
+  const interior = document.createElement("span");
+  interior.className = "tarjeta-interior";
+
+  const reverso = document.createElement("span");
+  reverso.className = "cara reverso";
+  reverso.setAttribute("aria-hidden", "true");
+
+  const frente = document.createElement("span");
+  frente.className = "cara frente";
+
+  const principal = document.createElement("span");
+  principal.className = tipoTarjeta === "simbolo" ? "simbolo" : "nombre";
+  principal.textContent = contenido;
+
+  const categoria = document.createElement("span");
+  categoria.className = "tipo";
+  categoria.textContent = tipoTarjeta === "simbolo"
+    ? "Símbolo"
+    : elemento.tipo;
+
+  frente.appendChild(principal);
+  frente.appendChild(categoria);
+  interior.appendChild(reverso);
+  interior.appendChild(frente);
+  boton.appendChild(interior);
+
+  boton.addEventListener("click", () => voltearTarjeta(boton));
+
+  return boton;
+}
+
+function detenerReloj() {
+  if (temporizador !== null) {
+    clearInterval(temporizador);
+    temporizador = null;
+  }
+}
+
+function iniciarReloj() {
+  if (inicioTiempo !== null) return;
+
+  inicioTiempo = Date.now();
+  temporizador = setInterval(actualizarTiempo, 1000);
+}
+
+function iniciarMemorizacion() {
+  if (temporizadorMemorizacion !== null) {
+    clearInterval(temporizadorMemorizacion);
+  }
+
+  bloqueado = true;
+  let segundos = 10;
+
+  const tarjetas = [...tablero.querySelectorAll(".tarjeta")];
+
+  tarjetas.forEach(tarjeta => {
+    tarjeta.classList.add("volteada");
+  });
+
+  contador.style.display = "block";
+  contador.textContent = segundos;
+  mensaje.textContent = "Memoriza los nombres y símbolos.";
+
+  temporizadorMemorizacion = setInterval(() => {
+    segundos--;
+    contador.textContent = segundos;
+
+    if (segundos <= 0) {
+      clearInterval(temporizadorMemorizacion);
+      temporizadorMemorizacion = null;
+
+      tarjetas.forEach(tarjeta => {
+        tarjeta.classList.remove("volteada");
+        tarjeta.setAttribute("aria-label", "Tarjeta oculta");
+      });
+
+      contador.style.display = "none";
+      mensaje.textContent = "¡Comienza! Encuentra las parejas.";
+      inicioTiempo = null;
+      actualizarTiempo();
+      bloqueado = false;
+    }
+  }, 1000);
+}
+
+function iniciarPartida() {
+  detenerReloj();
+
+  if (temporizadorMemorizacion !== null) {
+    clearInterval(temporizadorMemorizacion);
+    temporizadorMemorizacion = null;
+  }
+
+  if (temporizadorError !== null) {
+    clearTimeout(temporizadorError);
+    temporizadorError = null;
+  }
+
+  const cantidadTarjetas = Number(selectorModo.value);
+  totalParejas = cantidadTarjetas / 2;
+
+  let seleccion = [...elementos];
+
+  if (totalParejas < elementos.length) {
+    seleccion = mezclar(seleccion).slice(0, totalParejas);
+  }
+
+  primeraTarjeta = null;
+  segundaTarjeta = null;
+  bloqueado = false;
+  intentos = 0;
+  parejasEncontradas = 0;
+  inicioTiempo = null;
+  partidaTerminada = false;
+  tarjetasAcertadas = new Set();
+
+  modal.classList.remove("visible");
+  tablero.innerHTML = "";
+
+  const tarjetas = [];
+
+  seleccion.forEach((elemento, indice) => {
+    tarjetas.push({
+      elemento,
+      contenido: elemento.nombre,
+      tipo: "nombre",
+      id: "nombre-" + indice
+    });
+
+    tarjetas.push({
+      elemento,
+      contenido: elemento.simbolo,
+      tipo: "simbolo",
+      id: "simbolo-" + indice
+    });
+  });
+
+  mezclar(tarjetas).forEach(tarjeta => {
+    tablero.appendChild(
+      crearTarjeta(
+        tarjeta.elemento,
+        tarjeta.contenido,
+        tarjeta.tipo,
+        tarjeta.id
+      )
+    );
+  });
+
+  mensaje.textContent = "¡Prepárate para memorizar!";
+  actualizarEstadisticas();
+  actualizarTiempo();
+  iniciarMemorizacion();
+}
+
+function voltearTarjeta(tarjeta) {
+  if (
+    bloqueado ||
+    partidaTerminada ||
+    tarjeta.classList.contains("volteada") ||
+    tarjeta.classList.contains("acertada")
+  ) {
+    return;
+  }
+
+  iniciarReloj();
+  tarjeta.classList.add("volteada");
+
+  tarjeta.setAttribute(
+    "aria-label",
+    tarjeta.dataset.tipo === "nombre"
+      ? "Nombre: " + tarjeta.querySelector(".nombre").textContent
+      : "Símbolo: " + tarjeta.querySelector(".simbolo").textContent
+  );
+
+  if (primeraTarjeta === null) {
+    primeraTarjeta = tarjeta;
+    mensaje.textContent = "Elige una segunda tarjeta.";
+    return;
+  }
+
+  segundaTarjeta = tarjeta;
+  intentos++;
+  actualizarEstadisticas();
+
+  const mismoElemento =
+    primeraTarjeta.dataset.elemento === segundaTarjeta.dataset.elemento;
+
+  const tiposDistintos =
+    primeraTarjeta.dataset.tipo !== segundaTarjeta.dataset.tipo;
+
+  if (mismoElemento && tiposDistintos) {
+    resolverAcierto();
+  } else {
+    resolverError();
+  }
+}
+
+function resolverAcierto() {
+  primeraTarjeta.classList.remove("volteada");
+  segundaTarjeta.classList.remove("volteada");
+
+  primeraTarjeta.classList.add("acertada");
+  segundaTarjeta.classList.add("acertada");
+
+  primeraTarjeta.disabled = true;
+  segundaTarjeta.disabled = true;
+
+  primeraTarjeta.setAttribute("aria-label", "Pareja encontrada");
+  segundaTarjeta.setAttribute("aria-label", "Pareja encontrada");
+
+  tarjetasAcertadas.add(primeraTarjeta.dataset.id);
+  tarjetasAcertadas.add(segundaTarjeta.dataset.id);
+
+  parejasEncontradas++;
+  mensaje.textContent = "¡Correcto! Encontraste una pareja.";
+
+  primeraTarjeta = null;
+  segundaTarjeta = null;
+
+  actualizarEstadisticas();
+
+  if (parejasEncontradas === totalParejas) {
+    terminarPartida();
+  }
+}
+
+function resolverError() {
+  bloqueado = true;
+  mensaje.textContent = "No coinciden. ¡Inténtalo de nuevo!";
+
+  temporizadorError = setTimeout(() => {
+    if (primeraTarjeta && segundaTarjeta) {
+      primeraTarjeta.classList.remove("volteada");
+      segundaTarjeta.classList.remove("volteada");
+
+      primeraTarjeta.setAttribute("aria-label", "Tarjeta oculta");
+      segundaTarjeta.setAttribute("aria-label", "Tarjeta oculta");
+    }
+
+    primeraTarjeta = null;
+    segundaTarjeta = null;
+    bloqueado = false;
+    temporizadorError = null;
+
+    mensaje.textContent = "Sigue buscando las parejas correctas.";
+  }, 850);
+}
+
+function terminarPartida() {
+  partidaTerminada = true;
+  detenerReloj();
+  actualizarTiempo();
+
+  const tiempoFinal = formatoTiempo(tiempoTranscurrido());
+  const precision = intentos === 0
+    ? 100
+    : Math.round((parejasEncontradas / intentos) * 100);
+
+  document.getElementById("resultadoIntentos").textContent = intentos;
+  document.getElementById("resultadoTiempo").textContent = tiempoFinal;
+  document.getElementById("resultadoPrecision").textContent =
+    precision + "%";
+
+  mensaje.textContent = "¡Felicidades! ¡Completaste el memorama!";
+
+  setTimeout(() => {
+    modal.classList.add("visible");
+    document.getElementById("jugarOtra").focus();
+  }, 350);
+}
+
+document.getElementById("iniciar").addEventListener(
+  "click", iniciarPartida
+);
+
+document.getElementById("reiniciar").addEventListener(
+  "click", iniciarPartida
+);
+
+document.getElementById("jugarOtra").addEventListener(
+  "click", iniciarPartida
+);
+
+selectorModo.addEventListener("change", iniciarPartida);
+
+modal.addEventListener("click", evento => {
+  if (evento.target === modal) {
+    modal.classList.remove("visible");
+  }
+});
+
+iniciarPartida();
+</script>
+</body>
+</html>
